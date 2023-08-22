@@ -762,6 +762,9 @@ func (c *Conn) readRecordOrCCS(expectChangeCipherSpec bool) error {
 		// to avoid copying the plaintext. This is safe because c.rawInput is
 		// not read from or written to until c.input is drained.
 		c.input.Reset(data)
+		if c.extraConfig != nil && c.extraConfig.OnReceiveApplicationDataRecord != nil {
+			c.extraConfig.OnReceiveApplicationDataRecord(len(record), len(data))
+		}
 
 	case recordTypeHandshake:
 		if len(data) == 0 || expectChangeCipherSpec {
@@ -1017,6 +1020,9 @@ func (c *Conn) writeRecordLocked(typ recordType, data []byte) (int, error) {
 		}
 		if _, err := c.write(outBuf); err != nil {
 			return n, err
+		}
+		if c.extraConfig != nil && c.extraConfig.OnSendApplicationDataRecord != nil && typ == recordTypeApplicationData {
+			c.extraConfig.OnSendApplicationDataRecord(len(outBuf), m)
 		}
 		n += m
 		data = data[m:]

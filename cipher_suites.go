@@ -197,6 +197,20 @@ type cipherSuiteTLS13 struct {
 	hash   crypto.Hash
 }
 
+type CipherSuiteTLS13 = cipherSuiteTLS13
+
+func (c *CipherSuiteTLS13) ID() uint16 {
+	return c.id
+}
+
+func (c *CipherSuiteTLS13) Hash() crypto.Hash {
+	return c.hash
+}
+
+func (c *CipherSuiteTLS13) DeriveSecret(secret []byte, label string, transcript hash.Hash) []byte {
+	return c.deriveSecret(secret, label, transcript)
+}
+
 var cipherSuitesTLS13 = []*cipherSuiteTLS13{ // TODO: replace with a map.
 	{TLS_AES_128_GCM_SHA256, 16, aeadAESGCMTLS13, crypto.SHA256},
 	{TLS_CHACHA20_POLY1305_SHA256, 32, aeadChaCha20Poly1305, crypto.SHA256},
