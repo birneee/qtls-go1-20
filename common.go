@@ -739,7 +739,7 @@ type ExtraConfig struct {
 
 	// Is called when the client uses a session ticket.
 	// Restores the application data that was saved earlier on GetAppDataForSessionTicket.
-	SetAppDataFromSessionState func([]byte)
+	SetAppDataFromSessionState func([]byte) (allowEarlyData bool)
 
 	// Is called when a record of type application data is received and decrypted.
 	// rawLength argument is the size of the raw encrypted record in bytes.
